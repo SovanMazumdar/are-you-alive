@@ -1,8 +1,8 @@
-# Daily Check-In Monitor  -  [“死了吗？”/ “活着吗？”]
+# Daily Check-In Monitor  -  ["Dead?" / "Alive?"]
 
 Short description: Open-source Python Flask app for daily wellness check-ins, automated email alerts, and a simple dashboard for caregivers, families, and seniors.
 
-Keywords/Tags: Are You Alive; AreYouAlive; daily check-in; check-in monitor; check-in reminder; daily check-in app; wellness check; elderly monitoring; senior safety; caregiver alerts; family alerts; emergency contact; email alerts; automated alerts; Python; Flask; SMTP; background tasks; scheduled tasks; cron; responsive web app; mobile-friendly; accessibility; 'I'm Alive' button; check-in dashboard; 7-day history; health monitoring; fall detection; home safety; lone worker check-in; 老年人; 签到提醒; 每日签到; 活着吗; 死了吗.
+Keywords/Tags: Are You Alive; AreYouAlive; daily check-in; check-in monitor; check-in reminder; daily check-in app; wellness check; elderly monitoring; senior safety; caregiver alerts; family alerts; emergency contact; email alerts; automated alerts; Python; Flask; SMTP; background tasks; scheduled tasks; cron; responsive web app; mobile-friendly; accessibility; 'I'm Alive' button; check-in dashboard; 7-day history; health monitoring; fall detection; home safety; lone worker check-in; Elderly; Check-in Reminder; Daily Check-in; Are you alive?; Are you dead?.
 
 A simple, open-source server-based daily check-in system that helps you monitor well-being and sends automated email alerts if a check-in is missed.
 
@@ -12,7 +12,7 @@ Developed by [Alexander Ezharjan](https://ezharjan.github.io/).
 
 <br>
 
-基于 “死了吗”/“活着吗” 软件的灵感 — Inspired by "Are You Alive" apps
+Inspired by the 'Are you dead?' / 'Are you alive?' software
 
 ---
 
