@@ -1,6 +1,7 @@
-# Daily Check-In Monitor  -  ["Dead?" / "Alive?"]
+# Daily Safety Check Monitor  -  ["Dead?" / "Alive?"]- 
 
-Short description: Open-source Python Flask app for daily wellness check-ins, automated email alerts, and a simple dashboard for caregivers, families, and seniors.
+Short description: Open-source Python Flask app for daily wellness check-ins, automated email alerts, and a simple dashboard Ideal for parents, senior citizens, families, lone workers in India.
+It supports Indian email providers.
 
 Keywords/Tags: Are You Alive; AreYouAlive; daily check-in; check-in monitor; check-in reminder; daily check-in app; wellness check; elderly monitoring; senior safety; caregiver alerts; family alerts; emergency contact; email alerts; automated alerts; Python; Flask; SMTP; background tasks; scheduled tasks; cron; responsive web app; mobile-friendly; accessibility; 'I'm Alive' button; check-in dashboard; 7-day history; health monitoring; fall detection; home safety; lone worker check-in; Elderly; Check-in Reminder; Daily Check-in; Are you alive?; Are you dead?.
 
