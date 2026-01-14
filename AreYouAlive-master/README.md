@@ -9,7 +9,7 @@ A simple, open-source server-based daily check-in system that helps you monitor 
 
 
 Developed by [Alexander Ezharjan](https://ezharjan.github.io/).
-
+Redeevloped by [Sovan Dibyajyoti](https://github.com/SovanMazumdar).
 
 <br>
 
