@@ -92,6 +92,14 @@ def schedule_checker():
         schedule.run_pending()
         time.sleep(60)
 
+@app.route("/privacy")
+def privacy():
+    return render_template(
+        "privacy.html",
+        current_year=datetime.now().year
+    )
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
