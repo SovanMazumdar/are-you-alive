@@ -9,7 +9,9 @@ A simple, open-source server-based daily check-in system that helps you monitor 
 
 
 Developed by [Alexander Ezharjan](https://ezharjan.github.io/).
+
 <br>
+
 Redeveloped by [Sovan Dibyajyoti](https://github.com/SovanMazumdar).
 
 <br>
@@ -60,7 +62,7 @@ SMTP_FROM_EMAIL=your-gmail@gmail.com            # Sender email
 # Optional (defaults provided)
 SMTP_SERVER=smtp.gmail.com                      # SMTP server
 SMTP_PORT=587                                    # SMTP port
-CHECKIN_SCHEDULE=08:00                            # Expected check-in time (HH:MM)
+CHECKIN_SCHEDULE=10:00                            # Expected check-in time (HH:MM)
 ALERT_TIME=20:00                                  # Time to check for missed check-ins (HH:MM)
 GRACE_PERIOD_HOURS=4                              # Hours of grace after schedule
 ```
