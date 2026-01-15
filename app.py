@@ -21,7 +21,7 @@ app = Flask(__name__)
 # Configuration
 CONFIG = {
     'checkin_schedule': '08:00',
-    'alert_time': '20:00',
+    'alert_time': '10:00',
     'grace_period_hours': 4,
     'emergency_email': os.environ.get('EMERGENCY_EMAIL', 'your-email@example.com'),
     'smtp_server': os.environ.get('SMTP_SERVER', 'smtp.gmail.com'),
