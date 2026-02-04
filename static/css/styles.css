@@ -187,6 +187,29 @@ h1 {
     min-height: 1.2em;
 }
 
+.daily-status-card {
+    margin: 1rem auto 0;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #e8f5e9;
+    box-shadow: 0 6px 16px rgba(22, 101, 52, 0.12);
+    text-align: left;
+    max-width: 360px;
+}
+
+.daily-status-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.daily-status-subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
 .links {
     margin-top: 2rem;
 }
