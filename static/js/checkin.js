@@ -1,9 +1,10 @@
 // Daily Check-In JavaScript
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const checkinBtn = document.getElementById('checkin-btn');
     const statusMessage = document.getElementById('status-message');
     const dailyStatusCard = document.getElementById('daily-status-card');
     const confettiBurst = document.getElementById('confetti-burst');
+
     const beforeCheckInMessage = 'Did you pause and acknowledge yourself today?';
     const afterCheckInMessage = 'Good job. You showed up today.';
 
@@ -37,23 +38,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    loadDailyStatus();
-
     function triggerSuccessEffects() {
         checkinBtn.classList.remove('checkin-success');
         void checkinBtn.offsetWidth;
         checkinBtn.classList.add('checkin-success');
 
-        if (!confettiBurst) {
-            return;
-        }
+        if (!confettiBurst) return;
 
         confettiBurst.innerHTML = '';
         confettiBurst.classList.remove('show');
         void confettiBurst.offsetWidth;
 
-        const confettiCount = 14;
-        for (let i = 0; i < confettiCount; i += 1) {
+        for (let i = 0; i < 14; i++) {
             const piece = document.createElement('span');
             piece.className = 'confetti-piece';
             piece.style.setProperty('--x', `${Math.random() * 160 - 80}px`);
@@ -70,36 +66,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 900);
     }
 
-    // Handle check-in button click
-    checkinBtn.addEventListener('click', async function() {
+    loadDailyStatus();
+    statusMessage.textContent = beforeCheckInMessage;
+
+    checkinBtn.addEventListener('click', async function () {
         checkinBtn.disabled = true;
         statusMessage.textContent = 'Checking in...';
 
         try {
-            const response = await fetch('/api/checkin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
+            const response = await fetch('/api/checkin', { method: 'POST' });
             const result = await response.json();
 
-            if (result.status === 'success') {
+            if (result.status === 'success' || result.status === 'info') {
                 statusMessage.textContent = afterCheckInMessage;
-                statusMessage.style.color = 'green';
-                triggerSuccessEffects();
-                await loadDailyStatus();
-            } else if (result.status === 'info') {
-                statusMessage.textContent = afterCheckInMessage;
-                statusMessage.style.color = '#0ea5e9';
+                statusMessage.style.color = result.status === 'success' ? 'green' : '#0ea5e9';
                 triggerSuccessEffects();
                 await loadDailyStatus();
             } else {
                 statusMessage.textContent = result.message || 'Check-in failed.';
                 statusMessage.style.color = 'red';
             }
-
         } catch (error) {
             console.error('Check-in failed:', error);
             statusMessage.textContent = 'Check-in failed. Please try again.';
@@ -108,6 +94,4 @@ document.addEventListener('DOMContentLoaded', function() {
             checkinBtn.disabled = false;
         }
     });
-
-    statusMessage.textContent = beforeCheckInMessage;
 });
