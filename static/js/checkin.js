@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkinBtn = document.getElementById('checkin-btn');
     const statusMessage = document.getElementById('status-message');
     const dailyStatusCard = document.getElementById('daily-status-card');
-
+const beforeCheckInMessage = "Did you pause and acknowledge yourself today?";
+const afterCheckInMessage = "Good job. You showed up today.";
     const statusTimeFormatter = new Intl.DateTimeFormat(undefined, {
         hour: 'numeric',
         minute: '2-digit'
@@ -52,11 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
 
             if (result.status === 'success') {
-                statusMessage.textContent = result.message;
+                statusMessage.textContent = afterCheckInMessage;
                 statusMessage.style.color = 'green';
                 await loadDailyStatus();
             } else if (result.status === 'info') {
-                statusMessage.textContent = result.message;
+                statusMessage.textContent = afterCheckInMessage;
                 statusMessage.style.color = '#0ea5e9';
                 await loadDailyStatus();
             } else {
@@ -72,4 +73,5 @@ document.addEventListener('DOMContentLoaded', function() {
             checkinBtn.disabled = false;
         }
     });
+statusMessage.textContent = beforeCheckInMessage;
 });
