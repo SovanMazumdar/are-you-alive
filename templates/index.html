@@ -5,43 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Check-In Monitor</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}">
 </head>
 <body>
     <div class="container">
         <h1>Daily Check-In Monitor</h1>
         <p class="subtitle">
-            Inspired by "Are You Alive?" (क्या आप ठीक हैं?) – Keep track of your daily check-ins
+            Inspired by "Are You Alive?" (क्या आप ठीक हैं?)
         </p>
 
         <div id="checkin-section">
-            <button
-                id="checkin-btn"
-                class="checkin-button circle"
-                aria-live="polite"
-                aria-label="Check in">
+            <button id="checkin-btn" class="checkin-button circle" aria-label="Check in">
                 Check In
             </button>
 
             <p id="status-message"></p>
 
-            <div
-                id="daily-status-card"
-                class="daily-status-card"
-                aria-live="polite"
-                hidden>
-            </div>
-
-            <div
-                id="confetti-burst"
-                class="confetti-burst"
-                aria-hidden="true">
-            </div>
+            <div id="daily-status-card" class="daily-status-card" hidden></div>
+            <div id="confetti-burst" class="confetti-burst" aria-hidden="true"></div>
         </div>
 
-        <div class="links">
-            <a href="/dashboard">View Dashboard</a>
-        </div>
+        <nav class="bottom-nav">
+            <a href="/" class="active">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/insights">Insights</a>
+            <a href="/settings">Settings</a>
+            <a href="/privacy">Privacy</a>
+        </nav>
     </div>
 
     <script src="{{ url_for('static', filename='js/checkin.js') }}"></script>

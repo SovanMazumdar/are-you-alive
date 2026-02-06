@@ -20,6 +20,10 @@ body {
     text-align: center;
 }
 
+.container.privacy-container {
+    text-align: left;
+}
+
 h1 {
     color: #333;
     margin-bottom: 0.5rem;
@@ -167,6 +171,25 @@ h1 {
     margin-top: 1rem;
 }
 
+.streak-summary {
+    display: grid;
+    gap: 0.4rem;
+    margin: 1rem auto 0;
+    max-width: 360px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.streak-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
 .view-toggle {
     padding: 0.4rem 0.8rem;
     border-radius: 8px;
@@ -194,6 +217,19 @@ h1 {
     padding: 0.6rem;
     background: #fff;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    font-family: inherit;
+}
+
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+}
+
+.day:focus {
+    outline: 2px solid rgba(99,102,241,0.3);
+    outline-offset: 2px;
 }
 
 .day .date {
@@ -218,8 +254,37 @@ h1 {
 }
 
 .day.missed {
-    background: #fff1f2;
-    border-color: #fecaca;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+.day.break {
+    background: #fef9c3;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.list-filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.filter-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: #f3f4f6;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.filter-btn.active {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
 }
 
 /* List view */
@@ -235,6 +300,8 @@ h1 {
     align-items: center;
     padding: 0.6rem 0.75rem;
     border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.12s ease;
 }
 
 .list-item.checked .list-status {
@@ -243,7 +310,16 @@ h1 {
 }
 
 .list-item.missed .list-status {
-    color: #ef4444;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.list-item:hover {
+    background: #f8fafc;
+}
+
+.list-item.break .list-status {
+    color: #b45309;
     font-weight: 600;
 }
 
@@ -290,39 +366,129 @@ h1 {
     text-decoration: underline;
 }
 
-/* Dashboard styles */
-.checkin-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+.bottom-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
-    margin: 2rem 0;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
 }
 
-.day {
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    padding: 0.5rem;
-    background: #f9f9f9;
+.nav-item {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #f8fafc;
 }
 
-.day.checked {
-    background: #d4edda;
-    border-color: #c3e6cb;
+.nav-item.active {
+    color: #0f172a;
+    background: #e2e8f0;
 }
 
-.day.missed {
-    background: #f8d7da;
-    border-color: #f5c6cb;
+.nav-item:hover {
+    color: #1d4ed8;
 }
 
-.date {
-    font-size: 0.8rem;
-    color: #666;
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 20;
 }
 
-.status {
+.modal.open {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    width: min(360px, 100%);
+    text-align: left;
+    position: relative;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
     font-size: 1.5rem;
-    margin-top: 0.5rem;
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    cursor: pointer;
+}
+
+.modal-date {
+    color: #64748b;
+    margin-top: 0.35rem;
+}
+
+.modal-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    gap: 1rem;
+}
+
+.modal-label {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.modal-value.checked {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.modal-value.missed {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.insight-card,
+.setting-card {
+    text-align: left;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: #f8fafc;
+}
+
+.setting-card label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: 600;
+}
+
+.setting-card input[type="time"] {
+    margin-top: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-family: inherit;
+}
+
+.setting-copy {
+    color: #0f766e;
+    font-weight: 600;
+}
+
+.setting-helper {
+    color: #64748b;
+    font-size: 0.85rem;
 }
 
 /* Mobile responsive */
