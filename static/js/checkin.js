@@ -3,9 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkinBtn = document.getElementById('checkin-btn');
     const statusMessage = document.getElementById('status-message');
     const dailyStatusCard = document.getElementById('daily-status-card');
-    const beforeCheckInMessage = 'Did you pause and acknowledge yourself today?';
-    const afterCheckInMessage = 'Good job. You showed up today.';
-
+const beforeCheckInMessage = "Did you pause and acknowledge yourself today?";
+const afterCheckInMessage = "Good job. You showed up today.";
     const statusTimeFormatter = new Intl.DateTimeFormat(undefined, {
         hour: 'numeric',
         minute: '2-digit'
@@ -74,6 +73,5 @@ document.addEventListener('DOMContentLoaded', function() {
             checkinBtn.disabled = false;
         }
     });
-
-    statusMessage.textContent = beforeCheckInMessage;
+statusMessage.textContent = beforeCheckInMessage;
 });
