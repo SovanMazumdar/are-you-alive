@@ -93,6 +93,72 @@ h1 {
     box-shadow: 0 18px 50px rgba(20,145,74,0.18);
 }
 
+.checkin-button.checkin-success {
+    animation: pulse-success 0.6s ease-out;
+}
+
+.confetti-burst {
+    position: relative;
+    width: 0;
+    height: 0;
+    margin: 0 auto;
+    pointer-events: none;
+}
+
+.confetti-burst.show {
+    height: 1px;
+}
+
+.confetti-piece {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 8px;
+    height: 12px;
+    border-radius: 3px;
+    background: #34d399;
+    transform: translate(-50%, 0) rotate(var(--r));
+    animation: confetti-fall var(--d, 0.8s) ease-out forwards;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.4) inset;
+}
+
+.confetti-piece:nth-child(3n) {
+    background: #fbbf24;
+}
+
+.confetti-piece:nth-child(3n + 1) {
+    background: #60a5fa;
+}
+
+@keyframes pulse-success {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(22,163,74,0.35);
+    }
+    60% {
+        transform: scale(1.04);
+        box-shadow: 0 0 0 18px rgba(22,163,74,0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(22,163,74,0);
+    }
+}
+
+@keyframes confetti-fall {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) rotate(0deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x)), var(--y)) rotate(240deg);
+    }
+}
+
 /* Dashboard view controls */
 .view-controls {
     display: flex;
