@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insights - Daily Check-In Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Insights</h1>
+        <p class="subtitle">Your progress snapshots are coming soon.</p>
+
+        <div class="insight-card">
+            <h2>Monthly Check-Ins</h2>
+            <p>Track how many days you showed up this month.</p>
+        </div>
+
+        <div class="insight-card">
+            <h2>Longest Streak</h2>
+            <p>Celebrate your strongest run so far.</p>
+        </div>
+
+        <div class="insight-card">
+            <h2>Missed vs Completed</h2>
+            <p>See a simple ratio of check-ins without heavy charts.</p>
+        </div>
+
+        <nav class="bottom-nav" aria-label="Primary">
+            <a class="nav-item" href="/">Home</a>
+            <a class="nav-item" href="/dashboard">Dashboard</a>
+            <a class="nav-item active" href="/insights">Insights</a>
+            <a class="nav-item" href="/settings">Settings</a>
+            <a class="nav-item" href="/privacy">Privacy</a>
+        </nav>
+    </div>
+</body>
+</html>
