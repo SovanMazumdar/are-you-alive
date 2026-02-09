@@ -46,16 +46,52 @@ def save_checkins(checkins):
 
 
 def normalize_checkins(checkins):
+    """
+    Supports both legacy string-based checkins:
+    ["2026-01-14"]
+
+    AND new structured checkins:
+    [{ "date": "2026-01-14", "timestamp": 1700000000000 }]
+    """
     normalized = []
+
     for entry in checkins:
-        date_str = entry.get('date')
-        ts = entry.get('timestamp')
-        if not date_str:
-            continue
-        date_obj = datetime.fromisoformat(date_str).date()
-        timestamp = ts or int(datetime.combine(date_obj, datetime.min.time()).timestamp() * 1000)
-        normalized.append({'date': date_obj.isoformat(), 'timestamp': timestamp})
-    return sorted(normalized, key=lambda x: x['date'], reverse=True)
+        # Legacy format: string date
+        if isinstance(entry, str):
+            try:
+                date_obj = datetime.fromisoformat(entry).date()
+                timestamp = int(
+                    datetime.combine(date_obj, datetime.min.time()).timestamp() * 1000
+                )
+                normalized.append({
+                    "date": date_obj.isoformat(),
+                    "timestamp": timestamp
+                })
+            except Exception:
+                continue
+
+        # New format: dict
+        elif isinstance(entry, dict):
+            date_str = entry.get("date")
+            ts = entry.get("timestamp")
+
+            if not date_str:
+                continue
+
+            try:
+                date_obj = datetime.fromisoformat(date_str).date()
+                timestamp = ts or int(
+                    datetime.combine(date_obj, datetime.min.time()).timestamp() * 1000
+                )
+                normalized.append({
+                    "date": date_obj.isoformat(),
+                    "timestamp": timestamp
+                })
+            except Exception:
+                continue
+
+    # Sort newest first
+    return sorted(normalized, key=lambda x: x["date"], reverse=True)
 
 
 def get_current_streak(checkins):
@@ -126,7 +162,8 @@ def checkin():
             save_checkins(checkins)
             return jsonify({'status': 'success'})
         return jsonify({'status': 'info'})
-    except Exception:
+    except Exception as e:
+        print("Check-in error:", e)
         return jsonify({'status': 'error'}), 500
 
 
@@ -153,5 +190,18 @@ def schedule_checker():
 
 
 if __name__ == '__main__':
-    threading.Thread(target=schedule_checker, daemon=True).start()
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    is_debug = os.environ.get("FLASK_ENV") != "production"
+
+    if is_debug:
+        print("Running in DEBUG mode")
+    else:
+        threading.Thread(
+            target=schedule_checker,
+            daemon=True
+        ).start()
+
+    app.run(
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 5000)),
+        debug=is_debug
+    )
