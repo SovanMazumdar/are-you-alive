@@ -2,99 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Privacy Policy - Are You Alive!</title>
+    <meta name="application-name" content="Are You Alright?">
+    <title>Privacy Policy - Are You Alright?</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: auto;
-            padding: 20px;
-            line-height: 1.6;
-            color: #222;
-            background: #f8fafc;
-            align-items: flex-start;
-        }
-        h1, h2 {
-            color: #00897B;
-        }
-        .privacy-container {
-            max-width: 900px;
-        }
-    </style>
 </head>
 <body>
 
-<div class="container privacy-container">
+<div class="container">
     <h1>Privacy Policy</h1>
     <p><strong>Last updated:</strong> {{ current_year }}</p>
 
-<p>
-Are You Alive! is a simple daily wellness and safety check-in application designed
-to help families, caregivers, and individuals ensure timely well-being confirmation.
-Your privacy and data security are very important to us.
-</p>
-
-<h2>Information We Collect</h2>
-<ul>
-    <li>Email addresses provided for daily check-in alerts and emergency notifications.</li>
-</ul>
-
-<h2>How We Use Your Information</h2>
-<ul>
-    <li>To send automated email alerts if a daily check-in is missed.</li>
-    <li>To notify designated emergency contacts when required.</li>
-</ul>
-
-<h2>Data Sharing</h2>
-<p>
-We <strong>do not sell, rent, or share</strong> your personal data with third parties.
-Email addresses are used <strong>only</strong> for the core functionality of the app.
-</p>
-
-<h2>Data Storage & Security</h2>
-<p>
-All data is stored securely on the application server.
-We take reasonable technical measures to protect user data from unauthorized access.
-</p>
-
-<h2>Open Source</h2>
-<p>
-Are You Alive! is an <strong>open-source project</strong>.
-The source code is publicly available, and users are encouraged to review it.
-</p>
-
-<h2>Children’s Privacy</h2>
-<p>
-This application is not intended for use by children under the age of 13.
-</p>
-
-<h2>User Control</h2>
-<p>
-Users may stop using the service at any time.
-Stored data will no longer be used once the service is inactive.
-</p>
-
-<h2>Changes to This Policy</h2>
-<p>
-This Privacy Policy may be updated from time to time.
-Any changes will be posted on this page.
-</p>
-
-<h2>Contact</h2>
-<p>
-If you have any questions about this Privacy Policy, you may contact us at:
-</p>
     <p>
-    <strong>Email:</strong> iamsovanhere@gmail.com
+        Are You Alright? is a simple daily wellness check-in application.
+        Your privacy and data security are important to us.
     </p>
 
-    <nav class="bottom-nav" aria-label="Primary">
-        <a class="nav-item" href="/">Home</a>
-        <a class="nav-item" href="/dashboard">Dashboard</a>
-        <a class="nav-item" href="/insights">Insights</a>
-        <a class="nav-item" href="/settings">Settings</a>
-        <a class="nav-item active" href="/privacy">Privacy</a>
+    <h2>Information We Collect</h2>
+    <ul>
+        <li>Daily check-in dates stored locally on the server.</li>
+    </ul>
+
+    <h2>Data Usage</h2>
+    <p>
+        Data is used only to calculate streaks and show your dashboard history.
+    </p>
+
+    <h2>Data Sharing</h2>
+    <p>
+        We do not sell, rent, or share your data with third parties.
+    </p>
+
+    <h2>Open Source</h2>
+    <p>
+        This is an open-source project. You are free to inspect the code.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+        <strong>Email:</strong> iamsovanhere@gmail.com
+    </p>
+
+    <nav class="bottom-nav">
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/insights">Insights</a>
+        <a href="/settings">Settings</a>
+        <a href="/privacy" class="active">Privacy</a>
     </nav>
 </div>
 

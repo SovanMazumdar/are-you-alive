@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, jsonify
 import json
 import os
 from datetime import datetime, timedelta
@@ -7,7 +7,6 @@ import schedule
 import time
 import threading
 
-# Load environment variables
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -27,7 +26,7 @@ CHECKINS_FILE = "checkins.json"
 
 
 # ----------------------------
-# Storage Helpers
+# Storage
 # ----------------------------
 
 def load_checkins():
@@ -57,7 +56,6 @@ def normalize_checkins(checkins):
         elif isinstance(entry, dict):
             date_str = entry.get("date")
             ts = entry.get("timestamp")
-
             if not date_str:
                 continue
 
@@ -107,7 +105,6 @@ def get_best_streak(checkins):
             current += 1
         else:
             current = 1
-
         best = max(best, current)
         prev = d_obj
 
@@ -178,7 +175,6 @@ def checkin():
         if today not in {c["date"] for c in checkins}:
             checkins.append({"date": today, "timestamp": ts})
 
-            # Keep only last 30 days
             cutoff = (datetime.now() - timedelta(days=30)).date().isoformat()
             checkins = [c for c in checkins if c["date"] >= cutoff]
 
@@ -216,7 +212,7 @@ def dashboard_api():
 
 
 # ----------------------------
-# Scheduler (Production Only)
+# Scheduler
 # ----------------------------
 
 def schedule_checker():

@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Insights - Daily Check-In Monitor</title>
+    <meta name="application-name" content="Are You Alright?">
+    <title>Insights - Are You Alright?</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
@@ -23,15 +24,15 @@
 
         <div class="insight-card">
             <h2>Missed vs Completed</h2>
-            <p>See a simple ratio of check-ins without heavy charts.</p>
+            <p>See a simple ratio of consistency over time.</p>
         </div>
 
-        <nav class="bottom-nav" aria-label="Primary">
-            <a class="nav-item" href="/">Home</a>
-            <a class="nav-item" href="/dashboard">Dashboard</a>
-            <a class="nav-item active" href="/insights">Insights</a>
-            <a class="nav-item" href="/settings">Settings</a>
-            <a class="nav-item" href="/privacy">Privacy</a>
+        <nav class="bottom-nav">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/insights" class="active">Insights</a>
+            <a href="/settings">Settings</a>
+            <a href="/privacy">Privacy</a>
         </nav>
     </div>
 </body>
