@@ -1,20 +1,49 @@
 // Dashboard JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('detail-modal');
+    const modalClose = modal?.querySelector('.modal-close');
+    const modalDate = document.getElementById('detail-date');
+    const modalStatus = document.getElementById('detail-status');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    let cachedCheckins = [];
+    let activeFilter = 'all';
+
     loadDashboard();
     setupViewToggle();
+    setupFilters();
+    setupModal();
 
     async function loadDashboard() {
         try {
-            const response = await fetch('/api/checkins');
-            const checkins = await response.json();
+            const [checkinsResponse, statusResponse] = await Promise.all([
+                fetch('/api/checkins'),
+                fetch('/api/status')
+            ]);
+            const checkins = await checkinsResponse.json();
+            const status = await statusResponse.json();
+            cachedCheckins = checkins;
 
             renderCalendarView(checkins);
             renderListView(checkins);
+            renderStreakSummary(status);
 
         } catch (error) {
             document.getElementById('calendar-container').innerHTML = '<p>Error loading dashboard.</p>';
             document.getElementById('list-container').innerHTML = '<p>Error loading dashboard.</p>';
             console.error(error);
+        }
+    }
+
+    function renderStreakSummary(status) {
+        const currentStreak = document.getElementById('current-streak');
+        const bestStreak = document.getElementById('best-streak');
+
+        if (currentStreak) {
+            currentStreak.textContent = status?.currentStreak ?? 0;
+        }
+        if (bestStreak) {
+            bestStreak.textContent = status?.bestStreak ?? 0;
         }
     }
 
@@ -39,6 +68,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function setupFilters() {
+        filterButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach((btn) => btn.classList.remove('active'));
+                button.classList.add('active');
+                activeFilter = button.dataset.filter || 'all';
+                renderListView(cachedCheckins);
+            });
+        });
+    }
+
+    function setupModal() {
+        if (!modal) {
+            return;
+        }
+
+        modalClose?.addEventListener('click', closeModal);
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function openModal(dateStr, checked) {
+        if (!modal || !modalDate || !modalStatus) {
+            return;
+        }
+
+        modalDate.textContent = new Date(dateStr).toLocaleDateString(undefined, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric'
+        });
+        modalStatus.textContent = checked ? 'Checked' : 'Missed';
+        modalStatus.className = `modal-value ${checked ? 'checked' : 'missed'}`;
+
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+        if (!modal) {
+            return;
+        }
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
     function renderCalendarView(checkins) {
         const today = new Date();
         const container = document.getElementById('calendar-container');
@@ -49,15 +127,22 @@ document.addEventListener('DOMContentLoaded', function() {
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
             const checked = checkins.includes(dateStr);
-            html += `<div class="day ${checked ? 'checked' : 'missed'}">
+            html += `<button class="day ${checked ? 'checked' : 'missed'}" data-date="${dateStr}" data-checked="${checked}">
                 <div class="date">${date.toLocaleDateString(undefined, {weekday: 'short'})}</div>
                 <div class="daynum">${date.getDate()}</div>
-                <div class="status">${checked ? '✓' : '✗'}</div>
-            </div>`;
+                <div class="status">${checked ? '✓' : '•'}</div>
+            </button>`;
         }
 
         html += '</div>';
         container.innerHTML = html;
+        container.querySelectorAll('.day').forEach((day) => {
+            day.addEventListener('click', () => {
+                const dateStr = day.dataset.date;
+                const checked = day.dataset.checked === 'true';
+                openModal(dateStr, checked);
+            });
+        });
     }
 
     function renderListView(checkins) {
@@ -65,13 +150,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const today = new Date();
         let html = '<ul class="checkin-list">';
 
-        // last 30 days
-        for (let i = 0; i < 30; i++) {
+        // last 14 days
+        for (let i = 0; i < 14; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
             const checked = checkins.includes(dateStr);
-            html += `<li class="list-item ${checked ? 'checked' : 'missed'}">
+            const status = checked ? 'checked' : 'missed';
+            if (activeFilter !== 'all' && activeFilter !== status) {
+                continue;
+            }
+            html += `<li class="list-item ${status}" data-date="${dateStr}" data-checked="${checked}">
                 <div class="list-date">${date.toLocaleDateString()}</div>
                 <div class="list-status">${checked ? 'Checked' : 'Missed'}</div>
             </li>`;
@@ -79,5 +168,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         html += '</ul>';
         container.innerHTML = html;
+        container.querySelectorAll('.list-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                const dateStr = item.dataset.date;
+                const checked = item.dataset.checked === 'true';
+                openModal(dateStr, checked);
+            });
+        });
     }
 });
