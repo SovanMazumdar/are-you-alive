@@ -1,39 +1,44 @@
-/* Daily Check-In Monitor Styles */
+/* Are You Alright? Design System */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #E6F0FF 0%, #D8E8F5 100%);
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #2D3748;
 }
 
 .container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 10px 26px rgba(108, 142, 245, 0.18);
     padding: 2rem;
     max-width: 500px;
     width: 90%;
     text-align: center;
 }
 
+.container.privacy-container {
+    text-align: left;
+}
+
 h1 {
-    color: #333;
+    color: #2D3748;
     margin-bottom: 0.5rem;
 }
 
 .subtitle {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 1.6rem;
 }
 
 .checkin-button {
-    background: #16a34a;
-    color: white;
+    background: #6C8EF5;
+    color: #FFFFFF;
     border: none;
     padding: 0.85rem 1.4rem;
     min-width: 140px;
@@ -42,8 +47,8 @@ h1 {
     font-size: 1.05rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
-    box-shadow: 0 6px 18px rgba(22,163,74,0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    box-shadow: 0 8px 18px rgba(108, 142, 245, 0.28);
     margin: 1.25rem auto;
     display: inline-flex;
     align-items: center;
@@ -52,9 +57,9 @@ h1 {
 }
 
 .checkin-button:hover:not(:disabled) {
-    background: #14914a;
+    background: #5B7DE6;
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(20,145,74,0.18);
+    box-shadow: 0 12px 28px rgba(108, 142, 245, 0.25);
 }
 
 .checkin-button:active:not(:disabled) {
@@ -66,15 +71,13 @@ h1 {
     color: #9ca3af;
     cursor: not-allowed;
     box-shadow: none;
-    transform: none;
 }
 
 .checkin-button:focus {
-    outline: 3px solid rgba(99,102,241,0.16);
+    outline: 3px solid rgba(108, 142, 245, 0.24);
     outline-offset: 2px;
 }
 
-/* Round large variant for the main check-in action */
 .checkin-button.circle {
     width: 200px;
     height: 200px;
@@ -84,16 +87,34 @@ h1 {
     border-radius: 50%;
     font-size: 1.3rem;
     font-weight: 700;
-    box-shadow: 0 12px 36px rgba(22,163,74,0.18);
+    box-shadow: 0 14px 34px rgba(108, 142, 245, 0.26);
     display: block;
 }
 
 .checkin-button.circle:hover:not(:disabled) {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 18px 50px rgba(20,145,74,0.18);
+    box-shadow: 0 20px 48px rgba(108, 142, 245, 0.28);
 }
 
-/* Dashboard view controls */
+.checkin-button.checkin-success {
+    animation: pulse-success 0.6s ease-out;
+}
+
+@keyframes pulse-success {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 142, 245, 0.3);
+    }
+    60% {
+        transform: scale(1.04);
+        box-shadow: 0 0 0 18px rgba(108, 142, 245, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 142, 245, 0);
+    }
+}
+
 .view-controls {
     display: flex;
     justify-content: center;
@@ -101,20 +122,40 @@ h1 {
     margin-top: 1rem;
 }
 
+.streak-summary {
+    display: grid;
+    gap: 0.4rem;
+    margin: 1rem auto 0;
+    max-width: 360px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dbe7fa;
+    color: #2D3748;
+    box-shadow: 0 8px 18px rgba(108, 142, 245, 0.12);
+}
+
+.streak-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
 .view-toggle {
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
+    padding: 0.45rem 0.85rem;
+    border-radius: 10px;
     border: 1px solid transparent;
-    background: #f3f4f6;
+    background: #eef4ff;
+    color: #2D3748;
     cursor: pointer;
 }
 
 .view-toggle.active {
-    background: #eef2ff;
-    border-color: #c7d2fe;
+    background: #6C8EF5;
+    color: #FFFFFF;
 }
 
-/* Calendar styles */
 .checkin-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -123,16 +164,30 @@ h1 {
 }
 
 .day {
-    border: 1px solid #e6e6e6;
-    border-radius: 8px;
+    border: 1px solid #dbe7fa;
+    border-radius: 10px;
     padding: 0.6rem;
-    background: #fff;
+    background: #FFFFFF;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    font-family: inherit;
 }
 
-.day .date {
+.day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(108, 142, 245, 0.15);
+}
+
+.day:focus {
+    outline: 2px solid rgba(108, 142, 245, 0.3);
+    outline-offset: 2px;
+}
+
+.day .date,
+.date {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #718096;
 }
 
 .day .daynum {
@@ -141,22 +196,51 @@ h1 {
     margin-top: 0.3rem;
 }
 
-.day .status {
+.day .status,
+.status {
     font-size: 1.2rem;
     margin-top: 0.35rem;
 }
 
 .day.checked {
-    background: #ecfdf5;
-    border-color: #bbf7d0;
+    background: rgba(76, 175, 158, 0.14);
+    border-color: rgba(76, 175, 158, 0.4);
 }
 
 .day.missed {
-    background: #fff1f2;
-    border-color: #fecaca;
+    background: #f7fafc;
+    border-color: #e2e8f0;
+    color: #718096;
 }
 
-/* List view */
+.day.break {
+    background: #fff7e6;
+    border-color: #f6c986;
+    color: #9b6b17;
+}
+
+.list-filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.filter-btn {
+    padding: 0.38rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: #edf3ff;
+    color: #2D3748;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.filter-btn.active {
+    background: #6C8EF5;
+    color: #FFFFFF;
+}
+
 .checkin-list {
     list-style: none;
     padding: 0;
@@ -168,75 +252,199 @@ h1 {
     justify-content: space-between;
     align-items: center;
     padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #edf2f7;
+    cursor: pointer;
+    transition: background 0.12s ease;
 }
 
 .list-item.checked .list-status {
-    color: #16a34a;
+    color: #4CAF9E;
     font-weight: 600;
 }
 
 .list-item.missed .list-status {
-    color: #ef4444;
+    color: #718096;
     font-weight: 600;
+}
+
+.list-item.break .list-status {
+    color: #9b6b17;
+    font-weight: 600;
+}
+
+.list-item:hover {
+    background: #f7fbff;
 }
 
 #status-message {
     margin-top: 1rem;
     font-weight: bold;
     min-height: 1.2em;
+    color: #2D3748;
 }
 
-.links {
-    margin-top: 2rem;
+.daily-status-card {
+    margin: 1rem auto 0;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 22px rgba(108, 142, 245, 0.16);
+    text-align: left;
+    max-width: 360px;
 }
 
-.links a {
-    color: #667eea;
-    text-decoration: none;
-    margin: 0 1rem;
+.daily-status-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2D3748;
 }
 
-.links a:hover {
-    text-decoration: underline;
+.daily-status-subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: #718096;
 }
 
-/* Dashboard styles */
-.checkin-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin: 2rem 0;
-}
-
-.day {
-    border: 2px solid #ddd;
-    border-radius: 5px;
+.bottom-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin: 1.5rem auto 0;
     padding: 0.5rem;
-    background: #f9f9f9;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 24px rgba(108, 142, 245, 0.2);
+    backdrop-filter: blur(6px);
+    max-width: 460px;
 }
 
-.day.checked {
-    background: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.day.missed {
-    background: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-.date {
+.nav-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    flex: 1;
+    color: #718096;
+    text-decoration: none;
+    font-weight: 600;
     font-size: 0.8rem;
-    color: #666;
+    padding: 0.45rem 0.55rem;
+    border-radius: 999px;
+    background: transparent;
+    transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.status {
+.nav-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.nav-label {
+    line-height: 1;
+}
+
+.nav-item:hover {
+    color: #2D3748;
+    background: rgba(108, 142, 245, 0.12);
+    transform: translateY(-1px);
+}
+
+.nav-item.active {
+    color: #FFFFFF;
+    background: #6C8EF5;
+    box-shadow: 0 6px 12px rgba(108, 142, 245, 0.33);
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(45, 55, 72, 0.32);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 20;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-content {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem;
+    width: min(360px, 100%);
+    text-align: left;
+    position: relative;
+    box-shadow: 0 18px 40px rgba(45, 55, 72, 0.2);
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
     font-size: 1.5rem;
-    margin-top: 0.5rem;
+    position: absolute;
+    right: 1.2rem;
+    top: 0.9rem;
+    cursor: pointer;
+    color: #718096;
 }
 
-/* Mobile responsive */
+.modal-date,
+.modal-label,
+.setting-helper {
+    color: #718096;
+}
+
+.modal-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    gap: 1rem;
+}
+
+.modal-value.checked {
+    color: #4CAF9E;
+    font-weight: 600;
+}
+
+.modal-value.missed {
+    color: #718096;
+    font-weight: 600;
+}
+
+.insight-card,
+.setting-card {
+    text-align: left;
+    border: 1px solid #dbe7fa;
+    border-radius: 14px;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(108, 142, 245, 0.1);
+}
+
+.setting-card label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: 600;
+}
+
+.setting-card input[type="time"] {
+    margin-top: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-family: inherit;
+}
+
+.setting-copy {
+    color: #4CAF9E;
+    font-weight: 600;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 1rem;
@@ -257,5 +465,17 @@ h1 {
         width: 150px;
         height: 150px;
         font-size: 1.05rem;
+    }
+
+    .bottom-nav {
+        gap: 0.25rem;
+        padding: 0.4rem;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        gap: 0.2rem;
+        font-size: 0.72rem;
+        padding: 0.4rem 0.3rem;
     }
 }

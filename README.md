@@ -1,9 +1,9 @@
-# Daily Safety Check Monitor  -  ["Dead?" / "Alive?"]- 
+# Are You Alright?
 
 Short description: Open-source Python Flask app for daily wellness check-ins, automated email alerts, and a simple dashboard Ideal for parents, senior citizens, families, lone workers in India.
 It supports Indian email providers.
 
-Keywords/Tags: Are You Alive; AreYouAlive; daily check-in; check-in monitor; check-in reminder; daily check-in app; wellness check; elderly monitoring; senior safety; caregiver alerts; family alerts; emergency contact; email alerts; automated alerts; Python; Flask; SMTP; background tasks; scheduled tasks; cron; responsive web app; mobile-friendly; accessibility; 'I'm Alive' button; check-in dashboard; 7-day history; health monitoring; fall detection; home safety; lone worker check-in; Elderly; Check-in Reminder; Daily Check-in; Are you alive?; Are you dead?.
+Keywords/Tags: Are You Alright; AreYouAlright; daily check-in; check-in monitor; check-in reminder; daily check-in app; wellness check; elderly monitoring; senior safety; caregiver alerts; family alerts; emergency contact; email alerts; automated alerts; Python; Flask; SMTP; background tasks; scheduled tasks; cron; responsive web app; mobile-friendly; accessibility; 'I'm Alive' button; check-in dashboard; 7-day history; health monitoring; fall detection; home safety; lone worker check-in; Elderly; Check-in Reminder; Daily Check-in; Are you alright?; Are you dead?.
 
 A simple, open-source server-based daily check-in system that helps you monitor well-being and sends automated email alerts if a check-in is missed.
 
@@ -16,7 +16,7 @@ Redeveloped by [Sovan Dibyajyoti](https://github.com/SovanMazumdar).
 
 <br>
 
-Inspired by the 'Are you dead?' / 'Are you alive?' software
+Inspired by the 'Are you dead?' / 'Are you alright?' software
 
 ---
 
@@ -30,7 +30,7 @@ Inspired by the 'Are you dead?' / 'Are you alive?' software
 1. Clone or download the project:
    ```bash
    git clone https://github.com/your/repo.git
-   cd AreYouAlive
+   cd AreYouAlright
    ```
 2. Install dependencies:
    ```bash

@@ -3,25 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Check-In Monitor</title>
+    <meta name="application-name" content="Are You Alright?">
+    <title>Are You Alright?</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
-        <h1>Daily Check-In Monitor</h1>
-        <p class="subtitle">Inspired by "Are You Alive?" (क्या आप ठीक हैं?) - Keep track of your daily check-ins</p>
+        <h1>Are You Alright?</h1>
+        <p class="subtitle">Inspired by "Are You Alright?" (क्या आप ठीक हैं?) - Keep track of your daily check-ins</p>
 
         <div id="checkin-section">
             <button id="checkin-btn" class="checkin-button circle" aria-live="polite" aria-label="Check in">Check In</button>
-            <p id="status-message"></p>
+            <p id="status-message">Did you pause and acknowledge yourself today?</p>
+            <div id="daily-status-card" class="daily-status-card" aria-live="polite" hidden></div>
         </div>
 
-        <div class="links">
-            <a href="/dashboard">View Dashboard</a>
-        </div>
+        <nav class="bottom-nav" aria-label="Primary">
+            <a class="nav-item active" href="/"><span class="nav-icon" aria-hidden="true">🏠</span><span class="nav-label">Home</span></a>
+            <a class="nav-item" href="/dashboard"><span class="nav-icon" aria-hidden="true">📊</span><span class="nav-label">Dashboard</span></a>
+            <a class="nav-item" href="/insights"><span class="nav-icon" aria-hidden="true">📈</span><span class="nav-label">Insights</span></a>
+            <a class="nav-item" href="/settings"><span class="nav-icon" aria-hidden="true">⚙️</span><span class="nav-label">Settings</span></a>
+            <a class="nav-item" href="/privacy"><span class="nav-icon" aria-hidden="true">🔒</span><span class="nav-label">Privacy</span></a>
+        </nav>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
     <script src="{{ url_for('static', filename='js/checkin.js') }}"></script>
 </body>
 </html>
