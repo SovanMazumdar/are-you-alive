@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="Are You Alright?">
     <title>Dashboard - Are You Alright?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
+    <meta name="application-name" content="Are You Alright?">
+    <title>Dashboard - Are You Alright?</title>
+=======
+>>>>>>> main
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 </head>
 <body>
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
     <div class="container">
         <h1>Are You Alright? Dashboard</h1>
         <p class="subtitle">Your recent check-in history</p>
@@ -64,8 +69,25 @@
                 <span class="modal-value" id="detail-mood">No mood recorded.</span>
             </div>
         </div>
+=======
+<div class="container">
+    <h1>Are You Alright? Dashboard</h1>
+    <p class="subtitle">Your recent check-in history</p>
+
+    <div class="streak-summary">
+        <div>🔥 Current Streak: <span id="current-streak">0</span> days</div>
+        <div>⭐ Best Streak: <span id="best-streak">0</span> days</div>
+>>>>>>> main
     </div>
 
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <nav class="bottom-nav">
+        <a href="/">Home</a>
+        <a href="/dashboard" class="active">Dashboard</a>
+        <a href="/insights">Insights</a>
+        <a href="/settings">Settings</a>
+        <a href="/privacy">Privacy</a>
+    </nav>
+</div>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>

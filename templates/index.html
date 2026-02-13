@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="Are You Alright?">
     <title>Are You Alright?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
+    <meta name="application-name" content="Are You Alright?">
+    <title>Are You Alright?</title>
+=======
+>>>>>>> main
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}">
 </head>
 <body>
     <div class="container">
         <h1>Are You Alright?</h1>
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
         <p class="subtitle">Inspired by "Are You Alright?" (क्या आप ठीक हैं?) - Keep track of your daily check-ins</p>
 
         <div id="checkin-section">
@@ -25,6 +31,28 @@
             <a class="nav-item" href="/insights"><span class="nav-icon" aria-hidden="true">📈</span><span class="nav-label">Insights</span></a>
             <a class="nav-item" href="/settings"><span class="nav-icon" aria-hidden="true">⚙️</span><span class="nav-label">Settings</span></a>
             <a class="nav-item" href="/privacy"><span class="nav-icon" aria-hidden="true">🔒</span><span class="nav-label">Privacy</span></a>
+=======
+        <p class="subtitle">
+            Inspired by “Are You Alright?” (क्या आप ठीक हैं?) – A simple daily check-in ritual.
+        </p>
+
+        <div id="checkin-section">
+            <button id="checkin-btn" class="checkin-button circle" aria-label="Check in">
+                Check In
+            </button>
+
+            <p id="status-message"></p>
+
+            <div id="daily-status-card" class="daily-status-card" hidden></div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/" class="active">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/insights">Insights</a>
+            <a href="/settings">Settings</a>
+            <a href="/privacy">Privacy</a>
+>>>>>>> main
         </nav>
     </div>
 

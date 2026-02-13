@@ -1,3 +1,4 @@
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
 // Daily Check-In JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     const checkinBtn = document.getElementById('checkin-btn');
@@ -58,13 +59,63 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }, 0);
     }
+=======
+document.addEventListener("DOMContentLoaded", () => {
+    const checkinBtn = document.getElementById("checkin-btn");
+    const statusMessage = document.getElementById("status-message");
+    const dailyStatusCard = document.getElementById("daily-status-card");
+>>>>>>> main
 
-    // Handle check-in button click
-    checkinBtn.addEventListener('click', async function() {
+    const beforeMsg = "Did you pause and acknowledge yourself today?";
+    const afterMsg = "Good job. You showed up today.";
+
+    const formatter = new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit"
+    });
+
+    statusMessage.textContent = beforeMsg;
+
+    async function loadStatus() {
+        const res = await fetch("/api/status");
+        const s = await res.json();
+
+        if (!s.currentStreak || !s.lastCheckInTime) {
+            dailyStatusCard.hidden = true;
+            return;
+        }
+
+        dailyStatusCard.innerHTML = `
+            <p class="daily-status-title">
+                You are alive for ${s.currentStreak} days in a row
+            </p>
+            <p class="daily-status-subtitle">
+                Last check-in: Today at ${formatter.format(new Date(s.lastCheckInTime))}
+            </p>
+        `;
+
+        dailyStatusCard.hidden = false;
+    }
+
+    function triggerConfetti() {
+        if (typeof window.confetti !== "function") return;
+
+        window.confetti({
+            particleCount: 80,
+            spread: 60,
+            startVelocity: 30,
+            ticks: 120,
+            scalar: 0.9,
+            origin: { y: 0.65 }
+        });
+    }
+
+    checkinBtn.addEventListener("click", async () => {
         checkinBtn.disabled = true;
-        statusMessage.textContent = 'Checking in...';
+        statusMessage.textContent = "Checking in...";
 
         try {
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
             const response = await fetch('/api/checkin', {
                 method: 'POST',
                 headers: {
@@ -83,19 +134,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusMessage.textContent = afterCheckInMessage;
                 statusMessage.style.color = '#0ea5e9';
                 await loadDailyStatus();
-            } else {
-                statusMessage.textContent = result.message || 'Check-in failed.';
-                statusMessage.style.color = 'red';
-            }
+=======
+            const res = await fetch("/api/checkin", { method: "POST" });
+            const r = await res.json();
 
-        } catch (error) {
-            console.error('Check-in failed:', error);
-            statusMessage.textContent = 'Check-in failed. Please try again.';
-            statusMessage.style.color = 'red';
+            if (r.status === "success" || r.status === "info") {
+                statusMessage.textContent = afterMsg;
+                statusMessage.style.color =
+                    r.status === "success" ? "green" : "#0ea5e9";
+
+                triggerConfetti();
+                await loadStatus();
+>>>>>>> main
+            } else {
+                statusMessage.textContent = "Check-in failed.";
+                statusMessage.style.color = "red";
+            }
+        } catch {
+            statusMessage.textContent = "Check-in failed.";
+            statusMessage.style.color = "red";
         } finally {
             checkinBtn.disabled = false;
         }
     });
 
+<<<<<<< codex/add-daily-status-card-below-check-in-button-gt98si
     statusMessage.textContent = beforeCheckInMessage;
 });
+=======
+    loadStatus();
+});
+>>>>>>> main
