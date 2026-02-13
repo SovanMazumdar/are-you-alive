@@ -22,7 +22,6 @@
             <p id="status-message"></p>
 
             <div id="daily-status-card" class="daily-status-card" hidden></div>
-            <div id="confetti-burst" class="confetti-burst" aria-hidden="true"></div>
         </div>
 
         <nav class="bottom-nav">
@@ -34,6 +33,7 @@
         </nav>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
     <script src="{{ url_for('static', filename='js/checkin.js') }}"></script>
 </body>
 </html>

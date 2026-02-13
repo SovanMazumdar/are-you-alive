@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const checkinBtn = document.getElementById("checkin-btn");
     const statusMessage = document.getElementById("status-message");
     const dailyStatusCard = document.getElementById("daily-status-card");
-    const confettiBurst = document.getElementById("confetti-burst");
 
     const beforeMsg = "Did you pause and acknowledge yourself today?";
     const afterMsg = "Good job. You showed up today.";
@@ -35,22 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
         dailyStatusCard.hidden = false;
     }
 
-    function confetti() {
-        if (!confettiBurst) return;
+    function triggerConfetti() {
+        if (typeof window.confetti !== "function") return;
 
-        confettiBurst.innerHTML = "";
-
-        for (let i = 0; i < 14; i++) {
-            const piece = document.createElement("span");
-            piece.className = "confetti-piece";
-            confettiBurst.appendChild(piece);
-        }
-
-        confettiBurst.classList.add("show");
-
-        setTimeout(() => {
-            confettiBurst.classList.remove("show");
-        }, 900);
+        window.confetti({
+            particleCount: 80,
+            spread: 60,
+            startVelocity: 30,
+            ticks: 120,
+            scalar: 0.9,
+            origin: { y: 0.65 }
+        });
     }
 
     checkinBtn.addEventListener("click", async () => {
@@ -66,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 statusMessage.style.color =
                     r.status === "success" ? "green" : "#0ea5e9";
 
-                confetti();
+                triggerConfetti();
                 await loadStatus();
             } else {
                 statusMessage.textContent = "Check-in failed.";

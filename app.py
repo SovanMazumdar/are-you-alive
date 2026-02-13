@@ -43,12 +43,6 @@ def save_checkins(checkins):
 
 
 def normalize_checkins(checkins):
-    """
-    Supports:
-    ["2026-01-14"]
-    OR
-    [{"date": "...", "timestamp": 123456}]
-    """
     normalized = []
 
     for entry in checkins:
@@ -63,8 +57,10 @@ def normalize_checkins(checkins):
         elif isinstance(entry, dict):
             date_str = entry.get("date")
             ts = entry.get("timestamp")
+
             if not date_str:
                 continue
+
             try:
                 d = datetime.fromisoformat(date_str).date()
                 timestamp = ts or int(
@@ -84,12 +80,15 @@ def normalize_checkins(checkins):
 def get_current_streak(checkins):
     if not checkins:
         return 0
+
     dates = {c["date"] for c in checkins}
     streak = 0
     day = datetime.now().date()
+
     while day.isoformat() in dates:
         streak += 1
         day -= timedelta(days=1)
+
     return streak
 
 
@@ -101,14 +100,17 @@ def get_best_streak(checkins):
     dates = sorted({c["date"] for c in checkins})
     best = current = 0
     prev = None
+
     for d in dates:
         d_obj = datetime.fromisoformat(d).date()
         if prev and (d_obj - prev).days == 1:
             current += 1
         else:
             current = 1
+
         best = max(best, current)
         prev = d_obj
+
     return best
 
 
@@ -193,7 +195,7 @@ def checkin():
             "bestStreak": streak_data["best_streak"],
         })
 
-    except Exception as e:
+    except Exception:
         logger.exception("Check-in error")
         return jsonify({"status": "error"}), 500
 
@@ -214,7 +216,7 @@ def dashboard_api():
 
 
 # ----------------------------
-# Scheduler (Production only)
+# Scheduler (Production Only)
 # ----------------------------
 
 def schedule_checker():
