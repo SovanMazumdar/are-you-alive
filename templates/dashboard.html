@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-In Dashboard - Daily Check-In Monitor</title>
+    <meta name="application-name" content="Are You Alright?">
+    <title>Dashboard - Are You Alright?</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
-        <h1>Check-In Dashboard</h1>
-        <p class="subtitle">Your last 7 days check-in history</p>
+        <h1>Are You Alright? Dashboard</h1>
+        <p class="subtitle">Your recent check-in history</p>
+
+        <div class="streak-summary">
+            <div class="streak-item">🔥 Current Streak: <span id="current-streak">0</span> days</div>
+            <div class="streak-item">⭐ Best Streak: <span id="best-streak">0</span> days</div>
+        </div>
 
         <div class="view-controls">
             <button id="calendar-view-btn" class="view-toggle active">Calendar</button>
@@ -21,12 +27,42 @@
             <p>Loading calendar...</p>
         </div>
 
+        <div class="list-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="checked">Checked</button>
+            <button class="filter-btn" data-filter="missed">Missed</button>
+        </div>
+
         <div id="list-container" style="display:none">
             <p>Loading list...</p>
         </div>
 
-        <div class="links">
-            <a href="/">Back to Check-In</a>
+        <nav class="bottom-nav" aria-label="Primary">
+            <a class="nav-item" href="/">Home</a>
+            <a class="nav-item active" href="/dashboard">Dashboard</a>
+            <a class="nav-item" href="/insights">Insights</a>
+            <a class="nav-item" href="/settings">Settings</a>
+            <a class="nav-item" href="/privacy">Privacy</a>
+        </nav>
+    </div>
+
+    <div id="detail-modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+            <button class="modal-close" aria-label="Close details">&times;</button>
+            <h2 id="detail-title">Daily Check-In</h2>
+            <p class="modal-date" id="detail-date"></p>
+            <div class="modal-row">
+                <span class="modal-label">Status</span>
+                <span class="modal-value" id="detail-status"></span>
+            </div>
+            <div class="modal-row">
+                <span class="modal-label">Note</span>
+                <span class="modal-value" id="detail-note">No note yet.</span>
+            </div>
+            <div class="modal-row">
+                <span class="modal-label">Mood</span>
+                <span class="modal-value" id="detail-mood">No mood recorded.</span>
+            </div>
         </div>
     </div>
 
