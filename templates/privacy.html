@@ -9,46 +9,60 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Privacy Policy</h1>
-    <p><strong>Last updated:</strong> {{ current_year }}</p>
+<div class="container privacy-container">
+    <section class="privacy-hero" aria-labelledby="privacy-title">
+        <div class="privacy-badge">🔒 Calm, private check-ins</div>
+        <h1 id="privacy-title">Privacy Policy</h1>
+        <p class="page-kicker">
+            Are You Alright? keeps your daily ritual simple. We collect only what is needed to show your check-in history and streaks.
+        </p>
+        <p class="daily-status-subtitle"><strong>Last updated:</strong> {{ current_year }}</p>
+    </section>
 
-    <p>
-        Are You Alright? is a simple daily wellness check-in application.
-        Your privacy and data security are important to us.
-    </p>
+    <div class="privacy-grid">
+        <section class="privacy-card">
+            <h2><span aria-hidden="true">🗓️</span> Information We Collect</h2>
+            <ul class="privacy-list">
+                <li>Daily check-in dates stored locally on the server.</li>
+                <li>Check-in timestamps used for your most recent status card.</li>
+            </ul>
+        </section>
 
-    <h2>Information We Collect</h2>
-    <ul>
-        <li>Daily check-in dates stored locally on the server.</li>
-    </ul>
+        <section class="privacy-card">
+            <h2><span aria-hidden="true">🌱</span> How We Use Data</h2>
+            <p>
+                Your data is used only to calculate streaks, show your dashboard history, and make the app feel encouraging after each check-in.
+            </p>
+        </section>
 
-    <h2>Data Usage</h2>
-    <p>
-        Data is used only to calculate streaks and show your dashboard history.
-    </p>
+        <section class="privacy-card">
+            <h2><span aria-hidden="true">🤝</span> Data Sharing</h2>
+            <p>
+                We do not sell, rent, or share your check-in data with third parties.
+            </p>
+        </section>
 
-    <h2>Data Sharing</h2>
-    <p>
-        We do not sell, rent, or share your data with third parties.
-    </p>
+        <section class="privacy-card">
+            <h2><span aria-hidden="true">🧭</span> Open Source</h2>
+            <p>
+                This project is open source, so you can inspect how the app stores and displays your information.
+            </p>
+        </section>
 
-    <h2>Open Source</h2>
-    <p>
-        This is an open-source project. You are free to inspect the code.
-    </p>
+        <section class="privacy-card privacy-contact">
+            <h2><span aria-hidden="true">✉️</span> Contact</h2>
+            <p>
+                Questions about privacy? Email <a href="mailto:iamsovanhere@gmail.com">iamsovanhere@gmail.com</a>.
+            </p>
+        </section>
+    </div>
 
-    <h2>Contact</h2>
-    <p>
-        <strong>Email:</strong> iamsovanhere@gmail.com
-    </p>
-
-    <nav class="bottom-nav">
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/insights">Insights</a>
-        <a href="/settings">Settings</a>
-        <a href="/privacy" class="active">Privacy</a>
+    <nav class="bottom-nav" aria-label="Primary navigation">
+        <a href="/" class="nav-item"><span class="nav-icon" aria-hidden="true">🏠</span><span>Home</span></a>
+        <a href="/dashboard" class="nav-item"><span class="nav-icon" aria-hidden="true">📊</span><span>Dashboard</span></a>
+        <a href="/insights" class="nav-item"><span class="nav-icon" aria-hidden="true">📈</span><span>Insights</span></a>
+        <a href="/settings" class="nav-item"><span class="nav-icon" aria-hidden="true">⚙️</span><span>Settings</span></a>
+        <a href="/privacy" class="nav-item active" aria-current="page"><span class="nav-icon" aria-hidden="true">🔒</span><span>Privacy</span></a>
     </nav>
 </div>
 

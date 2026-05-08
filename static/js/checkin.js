@@ -22,9 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const streak = Number(s.currentStreak);
+        const dayLabel = streak === 1 ? "day" : "days";
+
         dailyStatusCard.innerHTML = `
             <p class="daily-status-title">
-                You are alive for ${s.currentStreak} days in a row
+                You are alright for ${streak} ${dayLabel} in a row
             </p>
             <p class="daily-status-subtitle">
                 Last check-in: Today at ${formatter.format(new Date(s.lastCheckInTime))}
