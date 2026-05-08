@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalStatus = document.getElementById('detail-status');
     const filterButtons = document.querySelectorAll('.filter-btn');
 
-    let cachedCheckins = [];
+    let cachedCheckinDates = [];
     let activeFilter = 'all';
 
     loadDashboard();
@@ -16,34 +16,81 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function loadDashboard() {
         try {
-            const [checkinsResponse, statusResponse] = await Promise.all([
-                fetch('/api/checkins'),
-                fetch('/api/status')
-            ]);
-            const checkins = await checkinsResponse.json();
-            const status = await statusResponse.json();
-            cachedCheckins = checkins;
+            const response = await fetch('/api/dashboard');
+            const dashboard = await response.json();
 
-            renderCalendarView(checkins);
-            renderListView(checkins);
-            renderStreakSummary(status);
+            if (!response.ok) {
+                throw new Error(dashboard.message || 'Dashboard request failed');
+            }
+
+            cachedCheckinDates = normalizeCheckinDates(dashboard.checkins || []);
+
+            renderCalendarView(cachedCheckinDates);
+            renderListView(cachedCheckinDates);
+            renderStreakSummary(dashboard);
 
         } catch (error) {
-            document.getElementById('calendar-container').innerHTML = '<p>Error loading dashboard.</p>';
-            document.getElementById('list-container').innerHTML = '<p>Error loading dashboard.</p>';
+            const calendarContainer = document.getElementById('calendar-container');
+            const listContainer = document.getElementById('list-container');
+
+            if (calendarContainer) {
+                calendarContainer.innerHTML = '<p>Error loading dashboard.</p>';
+            }
+            if (listContainer) {
+                listContainer.innerHTML = '<p>Error loading dashboard.</p>';
+            }
             console.error(error);
         }
     }
 
-    function renderStreakSummary(status) {
+    function normalizeCheckinDates(checkins) {
+        return [...new Set(checkins.map((checkin) => {
+            if (typeof checkin === 'string') {
+                return checkin;
+            }
+            return checkin?.date;
+        }).filter(Boolean))];
+    }
+
+    function dateToISODate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function getLastThirtyDays() {
+        const today = new Date();
+        return Array.from({ length: 30 }, (_, index) => {
+            const date = new Date(today);
+            date.setDate(date.getDate() - index);
+            return { date, dateStr: dateToISODate(date) };
+        });
+    }
+
+    function getVisibleDays(checkins) {
+        const checkedDates = new Set(checkins);
+        return getLastThirtyDays().filter(({ dateStr }) => {
+            const checked = checkedDates.has(dateStr);
+            if (activeFilter === 'checked') {
+                return checked;
+            }
+            if (activeFilter === 'missed') {
+                return !checked;
+            }
+            return true;
+        });
+    }
+
+    function renderStreakSummary(dashboard) {
         const currentStreak = document.getElementById('current-streak');
         const bestStreak = document.getElementById('best-streak');
 
         if (currentStreak) {
-            currentStreak.textContent = status?.currentStreak ?? 0;
+            currentStreak.textContent = dashboard?.current_streak ?? dashboard?.currentStreak ?? 0;
         }
         if (bestStreak) {
-            bestStreak.textContent = status?.bestStreak ?? 0;
+            bestStreak.textContent = dashboard?.best_streak ?? dashboard?.bestStreak ?? 0;
         }
     }
 
@@ -52,6 +99,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const listBtn = document.getElementById('list-view-btn');
         const calContainer = document.getElementById('calendar-container');
         const listContainer = document.getElementById('list-container');
+
+        if (!calBtn || !listBtn || !calContainer || !listContainer) {
+            return;
+        }
 
         calBtn.addEventListener('click', () => {
             calBtn.classList.add('active');
@@ -74,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 filterButtons.forEach((btn) => btn.classList.remove('active'));
                 button.classList.add('active');
                 activeFilter = button.dataset.filter || 'all';
-                renderListView(cachedCheckins);
+                renderListView(cachedCheckinDates);
             });
         });
     }
@@ -97,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        modalDate.textContent = new Date(dateStr).toLocaleDateString(undefined, {
+        modalDate.textContent = new Date(`${dateStr}T00:00:00`).toLocaleDateString(undefined, {
             weekday: 'long',
             month: 'long',
             day: 'numeric'
@@ -118,21 +169,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderCalendarView(checkins) {
-        const today = new Date();
         const container = document.getElementById('calendar-container');
+        if (!container) {
+            return;
+        }
+
+        const checkedDates = new Set(checkins);
+        const days = getLastThirtyDays().slice(0, 7).reverse();
         let html = '<div class="checkin-grid">';
 
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const checked = checkins.includes(dateStr);
+        days.forEach(({ date, dateStr }) => {
+            const checked = checkedDates.has(dateStr);
             html += `<button class="day ${checked ? 'checked' : 'missed'}" data-date="${dateStr}" data-checked="${checked}">
                 <div class="date">${date.toLocaleDateString(undefined, {weekday: 'short'})}</div>
                 <div class="daynum">${date.getDate()}</div>
                 <div class="status">${checked ? '✓' : '•'}</div>
             </button>`;
-        }
+        });
 
         html += '</div>';
         container.innerHTML = html;
@@ -147,24 +200,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderListView(checkins) {
         const container = document.getElementById('list-container');
-        const today = new Date();
+        if (!container) {
+            return;
+        }
+
+        const checkedDates = new Set(checkins);
         let html = '<ul class="checkin-list">';
 
-        // last 14 days
-        for (let i = 0; i < 14; i++) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const checked = checkins.includes(dateStr);
+        getVisibleDays(checkins).forEach(({ date, dateStr }) => {
+            const checked = checkedDates.has(dateStr);
             const status = checked ? 'checked' : 'missed';
-            if (activeFilter !== 'all' && activeFilter !== status) {
-                continue;
-            }
             html += `<li class="list-item ${status}" data-date="${dateStr}" data-checked="${checked}">
                 <div class="list-date">${date.toLocaleDateString()}</div>
                 <div class="list-status">${checked ? 'Checked' : 'Missed'}</div>
             </li>`;
-        }
+        });
 
         html += '</ul>';
         container.innerHTML = html;
