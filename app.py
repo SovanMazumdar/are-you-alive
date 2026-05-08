@@ -159,6 +159,37 @@ def get_dashboard_data(days=DASHBOARD_WINDOW_DAYS):
     }
 
 
+def get_monthly_checkin_count(checkins, today=None):
+    normalized = normalize_checkins(checkins)
+    current_day = today or datetime.now().date()
+    month_prefix = current_day.strftime("%Y-%m")
+
+    return sum(1 for checkin in normalized if checkin["date"].startswith(month_prefix))
+
+
+def get_month_elapsed_days(today=None):
+    current_day = today or datetime.now().date()
+    return current_day.day
+
+
+def get_completion_rate(checkins, today=None):
+    elapsed_days = get_month_elapsed_days(today=today)
+    if elapsed_days <= 0:
+        return 0.0
+
+    return round(get_monthly_checkin_count(checkins, today=today) / elapsed_days, 4)
+
+
+def get_insights_data(today=None):
+    checkins = normalize_checkins(load_checkins())
+
+    return {
+        "monthly_checkins": get_monthly_checkin_count(checkins, today=today),
+        "longest_streak": get_best_streak(checkins),
+        "completion_rate": get_completion_rate(checkins, today=today),
+    }
+
+
 def get_filter_data(days=DASHBOARD_WINDOW_DAYS):
     dashboard_data = get_dashboard_data(days=days)
     checked_dates = set(dashboard_data["checkins"])
@@ -278,6 +309,12 @@ def checkins_api():
 @api_error_response("Dashboard filters")
 def dashboard_filters_api():
     return jsonify(get_filter_data())
+
+
+@app.route("/api/insights")
+@api_error_response("Insights")
+def insights_api():
+    return jsonify(get_insights_data())
 
 
 @app.route("/health")

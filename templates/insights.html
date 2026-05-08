@@ -10,22 +10,44 @@
 <body>
     <div class="container">
         <h1>Insights</h1>
-        <p class="subtitle">Your progress snapshots are coming soon.</p>
+        <p class="subtitle">A quiet look at how often you have been showing up.</p>
 
-        <div class="insight-card">
-            <h2>Monthly Check-Ins</h2>
-            <p>Track how many days you showed up this month.</p>
-        </div>
+        <section class="insights-grid" aria-label="Check-in insights">
+            <article class="insight-card metric-card">
+                <div class="metric-header">
+                    <h2>Monthly Check-Ins</h2>
+                    <span class="metric-value" id="monthly-checkins">—</span>
+                </div>
+                <p>Days completed so far this month.</p>
+                <div class="progress-track" aria-hidden="true">
+                    <div class="progress-fill" id="monthly-progress"></div>
+                </div>
+            </article>
 
-        <div class="insight-card">
-            <h2>Longest Streak</h2>
-            <p>Celebrate your strongest run so far.</p>
-        </div>
+            <article class="insight-card metric-card">
+                <div class="metric-header">
+                    <h2>Completion Ratio</h2>
+                    <span class="metric-value" id="completion-rate">—</span>
+                </div>
+                <p>Your completed days compared with the days elapsed this month.</p>
+                <div class="progress-track" aria-hidden="true">
+                    <div class="progress-fill accent" id="completion-progress"></div>
+                </div>
+            </article>
 
-        <div class="insight-card">
-            <h2>Missed vs Completed</h2>
-            <p>See a simple ratio of consistency over time.</p>
-        </div>
+            <article class="insight-card metric-card">
+                <div class="metric-header">
+                    <h2>Longest Streak</h2>
+                    <span class="metric-value" id="longest-streak">—</span>
+                </div>
+                <p>Your longest continuous run of daily check-ins.</p>
+                <div class="progress-track" aria-hidden="true">
+                    <div class="progress-fill soft" id="streak-progress"></div>
+                </div>
+            </article>
+        </section>
+
+        <p class="insights-message" id="insights-message" role="status" aria-live="polite">Loading your insights…</p>
 
         <nav class="bottom-nav" aria-label="Primary navigation">
             <a href="/" class="nav-item"><span class="nav-icon" aria-hidden="true">🏠</span><span>Home</span></a>
@@ -35,5 +57,6 @@
             <a href="/privacy" class="nav-item"><span class="nav-icon" aria-hidden="true">🔒</span><span>Privacy</span></a>
         </nav>
     </div>
+    <script src="{{ url_for('static', filename='js/insights.js') }}"></script>
 </body>
 </html>
