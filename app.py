@@ -3,15 +3,13 @@ import json
 import os
 from datetime import datetime, timedelta
 import logging
+from functools import wraps
 import schedule
 import time
 import threading
+from dotenv import load_dotenv
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
+load_dotenv()
 
 
 # ---------------------------------------------------
@@ -28,6 +26,7 @@ CONFIG = {
 }
 
 CHECKINS_FILE = "checkins.json"
+DASHBOARD_WINDOW_DAYS = 30
 
 
 # ---------------------------------------------------
@@ -35,66 +34,79 @@ CHECKINS_FILE = "checkins.json"
 # ---------------------------------------------------
 
 def load_checkins():
-    if os.path.exists(CHECKINS_FILE):
-        try:
-            with open(CHECKINS_FILE, "r") as f:
-                return json.load(f)
-        except Exception:
-            logger.exception("Failed to load checkins.json")
-            return []
-    return []
+    if not os.path.exists(CHECKINS_FILE):
+        return []
+
+    with open(CHECKINS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def save_checkins(checkins):
-    try:
-        with open(CHECKINS_FILE, "w") as f:
-            json.dump(checkins, f)
-    except Exception:
-        logger.exception("Failed to save checkins.json")
+    with open(CHECKINS_FILE, "w", encoding="utf-8") as f:
+        json.dump(checkins, f)
+
+
+def _parse_checkin_date(date_str):
+    if not isinstance(date_str, str) or not date_str.strip():
+        raise ValueError("check-in date must be a non-empty string")
+
+    return datetime.fromisoformat(date_str).date()
+
+
+def _timestamp_for_date(date_obj):
+    return int(datetime.combine(date_obj, datetime.min.time()).timestamp() * 1000)
 
 
 def normalize_checkins(checkins):
-    normalized = []
+    """Normalize legacy string and current dict check-ins into one entry per date."""
+    normalized_by_date = {}
+
+    if not checkins:
+        return []
 
     for entry in checkins:
-        if isinstance(entry, str):
-            try:
-                d = datetime.fromisoformat(entry).date()
-                ts = int(datetime.combine(d, datetime.min.time()).timestamp() * 1000)
-                normalized.append({"date": d.isoformat(), "timestamp": ts})
-            except Exception:
-                continue
-
-        elif isinstance(entry, dict):
-            date_str = entry.get("date")
-            ts = entry.get("timestamp")
-
-            if not date_str:
-                continue
-
-            try:
-                d = datetime.fromisoformat(date_str).date()
-                timestamp = int(ts) if ts else int(
-                    datetime.combine(d, datetime.min.time()).timestamp() * 1000
+        try:
+            if isinstance(entry, str):
+                date_obj = _parse_checkin_date(entry)
+                timestamp = _timestamp_for_date(date_obj)
+            elif isinstance(entry, dict):
+                date_obj = _parse_checkin_date(entry.get("date"))
+                raw_timestamp = entry.get("timestamp")
+                timestamp = (
+                    int(raw_timestamp)
+                    if raw_timestamp is not None
+                    else _timestamp_for_date(date_obj)
                 )
-                normalized.append({"date": d.isoformat(), "timestamp": timestamp})
-            except Exception:
+            else:
+                logger.warning("Skipping unsupported check-in entry type: %r", entry)
                 continue
+        except (TypeError, ValueError) as exc:
+            logger.warning("Skipping invalid check-in entry %r: %s", entry, exc)
+            continue
 
-    return sorted(normalized, key=lambda x: x["date"], reverse=True)
+        date_key = date_obj.isoformat()
+        existing = normalized_by_date.get(date_key)
+        if existing is None or timestamp > existing["timestamp"]:
+            normalized_by_date[date_key] = {"date": date_key, "timestamp": timestamp}
+
+    return sorted(normalized_by_date.values(), key=lambda x: x["date"], reverse=True)
 
 
 # ---------------------------------------------------
 # Streak Logic
 # ---------------------------------------------------
 
-def get_current_streak(checkins):
-    if not checkins:
+def get_checkin_dates(checkins):
+    return {c["date"] for c in normalize_checkins(checkins)}
+
+
+def get_current_streak(checkins, today=None):
+    dates = get_checkin_dates(checkins)
+    if not dates:
         return 0
 
-    dates = {c["date"] for c in checkins}
     streak = 0
-    day = datetime.now().date()
+    day = today or datetime.now().date()
 
     while day.isoformat() in dates:
         streak += 1
@@ -104,51 +116,74 @@ def get_current_streak(checkins):
 
 
 def get_best_streak(checkins):
-    dates = sorted({c["date"] for c in checkins})
+    dates = sorted(get_checkin_dates(checkins))
     if not dates:
         return 0
 
     best = 1
     current = 1
-    prev = datetime.fromisoformat(dates[0]).date()
+    previous_date = datetime.fromisoformat(dates[0]).date()
 
     for date_str in dates[1:]:
         current_date = datetime.fromisoformat(date_str).date()
 
-        if (current_date - prev).days == 1:
+        if (current_date - previous_date).days == 1:
             current += 1
         else:
             best = max(best, current)
             current = 1
 
-        prev = current_date
+        previous_date = current_date
 
     return max(best, current)
 
 
 def get_last_checkin_time(checkins):
-    return max((c["timestamp"] for c in checkins), default=None)
+    normalized = normalize_checkins(checkins)
+    return max((c["timestamp"] for c in normalized), default=None)
 
 
-def get_dashboard_data(days=30):
+def get_dashboard_window(days=DASHBOARD_WINDOW_DAYS, today=None):
+    window_end = today or datetime.now().date()
+    return [(window_end - timedelta(days=i)).isoformat() for i in range(days)]
+
+
+def get_dashboard_data(days=DASHBOARD_WINDOW_DAYS):
     checkins = normalize_checkins(load_checkins())
-    checked_dates = {c["date"] for c in checkins}
-    today = datetime.now().date()
-
-    window = [
-        (today - timedelta(days=i)).isoformat()
-        for i in range(days)
-    ]
-
-    missed = [d for d in window if d not in checked_dates]
+    checkin_dates = sorted({c["date"] for c in checkins}, reverse=True)
 
     return {
-        "checkins": sorted(checked_dates, reverse=True),
+        "checkins": checkin_dates,
         "current_streak": get_current_streak(checkins),
         "best_streak": get_best_streak(checkins),
-        "checked_dates": sorted(checked_dates, reverse=True),
-        "missed_dates": missed,
     }
+
+
+def get_filter_data(days=DASHBOARD_WINDOW_DAYS):
+    dashboard_data = get_dashboard_data(days=days)
+    checked_dates = set(dashboard_data["checkins"])
+    window = get_dashboard_window(days=days)
+
+    return {
+        "all": window,
+        "checked": [date for date in window if date in checked_dates],
+        "missed": [date for date in window if date not in checked_dates],
+    }
+
+
+def api_error_response(route_name):
+    def decorator(route):
+        @wraps(route)
+        def wrapper(*args, **kwargs):
+            try:
+                return route(*args, **kwargs)
+            except Exception as exc:
+                logger.exception("%s failed", route_name)
+                return jsonify({"status": "error", "message": str(exc)}), 500
+
+        return wrapper
+
+    return decorator
 
 
 # ---------------------------------------------------
@@ -185,38 +220,39 @@ def privacy():
 # ---------------------------------------------------
 
 @app.route("/api/checkin", methods=["POST"])
+@api_error_response("Check-in")
 def checkin():
-    try:
-        today = datetime.now().date().isoformat()
-        ts = int(datetime.now().timestamp() * 1000)
+    now = datetime.now()
+    today = now.date().isoformat()
+    timestamp = int(now.timestamp() * 1000)
 
-        checkins = normalize_checkins(load_checkins())
+    checkins = normalize_checkins(load_checkins())
+    checked_dates = {c["date"] for c in checkins}
 
-        if today not in {c["date"] for c in checkins}:
-            checkins.append({"date": today, "timestamp": ts})
+    if today in checked_dates:
+        status = "info"
+    else:
+        checkins.append({"date": today, "timestamp": timestamp})
+        status = "success"
 
-            cutoff = (datetime.now() - timedelta(days=30)).date().isoformat()
-            checkins = [c for c in checkins if c["date"] >= cutoff]
+    checkins = normalize_checkins(checkins)
+    save_checkins(checkins)
 
-            save_checkins(checkins)
-            status = "success"
-        else:
-            status = "info"
+    current_streak = get_current_streak(checkins)
+    best_streak = get_best_streak(checkins)
 
-        streak_data = get_dashboard_data()
-
-        return jsonify({
-            "status": status,
-            "currentStreak": streak_data["current_streak"],
-            "bestStreak": streak_data["best_streak"],
-        })
-
-    except Exception:
-        logger.exception("Check-in error")
-        return jsonify({"status": "error"}), 500
+    return jsonify({
+        "status": status,
+        "checkins": sorted({c["date"] for c in checkins}, reverse=True),
+        "current_streak": current_streak,
+        "best_streak": best_streak,
+        "currentStreak": current_streak,
+        "bestStreak": best_streak,
+    })
 
 
 @app.route("/api/status")
+@api_error_response("Status")
 def status():
     checkins = normalize_checkins(load_checkins())
     return jsonify({
@@ -227,8 +263,21 @@ def status():
 
 
 @app.route("/api/dashboard")
+@api_error_response("Dashboard")
 def dashboard_api():
     return jsonify(get_dashboard_data())
+
+
+@app.route("/api/checkins")
+@api_error_response("Check-ins")
+def checkins_api():
+    return jsonify(get_dashboard_data()["checkins"])
+
+
+@app.route("/api/dashboard/filters")
+@api_error_response("Dashboard filters")
+def dashboard_filters_api():
+    return jsonify(get_filter_data())
 
 
 @app.route("/health")
