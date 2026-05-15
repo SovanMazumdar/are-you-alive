@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import json
 import os
 from datetime import datetime, timedelta
@@ -8,6 +8,7 @@ import schedule
 import time
 import threading
 from dotenv import load_dotenv
+from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
@@ -23,10 +24,16 @@ logger = logging.getLogger(__name__)
 
 CONFIG = {
     "alert_time": os.environ.get("ALERT_TIME", "10:00"),
+    "midnight_reminder_timezone": os.environ.get("MIDNIGHT_REMINDER_TIMEZONE", "Asia/Kolkata"),
+    "midnight_reminder_hour": int(os.environ.get("MIDNIGHT_REMINDER_HOUR", "23")),
+    "midnight_reminder_minute": int(os.environ.get("MIDNIGHT_REMINDER_MINUTE", "0")),
 }
 
 CHECKINS_FILE = "checkins.json"
+PROFILE_FILE = "profile.json"
 DASHBOARD_WINDOW_DAYS = 30
+PROFILE_FIELDS = ("firstName", "lastName", "username", "email", "phone")
+_scheduler = None
 
 
 # ---------------------------------------------------
@@ -44,6 +51,31 @@ def load_checkins():
 def save_checkins(checkins):
     with open(CHECKINS_FILE, "w", encoding="utf-8") as f:
         json.dump(checkins, f)
+
+
+def get_default_profile():
+    return {field: "" for field in PROFILE_FIELDS}
+
+
+def load_profile():
+    if not os.path.exists(PROFILE_FILE):
+        return get_default_profile()
+
+    with open(PROFILE_FILE, "r", encoding="utf-8") as f:
+        saved_profile = json.load(f)
+
+    profile = get_default_profile()
+    if isinstance(saved_profile, dict):
+        for field in PROFILE_FIELDS:
+            value = saved_profile.get(field, "")
+            profile[field] = "" if value is None else str(value)
+
+    return profile
+
+
+def save_profile(profile):
+    with open(PROFILE_FILE, "w", encoding="utf-8") as f:
+        json.dump(profile, f, indent=2)
 
 
 def _parse_checkin_date(date_str):
@@ -218,6 +250,85 @@ def api_error_response(route_name):
 
 
 # ---------------------------------------------------
+# Push Notifications
+# ---------------------------------------------------
+
+def send_fcm_push(token, title, body):
+    """Send a push notification via FCM's legacy endpoint when configured."""
+    if not token:
+        logger.info("Skipping FCM push: FCM_DEVICE_TOKEN is not configured")
+        return False
+
+    server_key = os.environ.get("FCM_SERVER_KEY")
+    if not server_key:
+        logger.info("Skipping FCM push: FCM_SERVER_KEY is not configured")
+        return False
+
+    import requests
+
+    auth_value = server_key if server_key.startswith(("Bearer ", "key=")) else f"Bearer {server_key}"
+    headers = {
+        "Authorization": auth_value,
+        "Content-Type": "application/json",
+    }
+    payload = {"to": token, "notification": {"title": title, "body": body}}
+
+    response = requests.post(
+        "https://fcm.googleapis.com/fcm/send",
+        json=payload,
+        headers=headers,
+        timeout=10,
+    )
+    response.raise_for_status()
+    logger.info("Sent midnight FCM reminder")
+    return True
+
+
+def send_midnight_reminder():
+    """Fires at 23:00 daily — warns users who haven't checked in."""
+    checkins = normalize_checkins(load_checkins())
+    today = datetime.now().date().isoformat()
+
+    if today in {c["date"] for c in checkins}:
+        logger.info("Skipping midnight reminder: today's check-in already exists")
+        return False
+
+    return send_fcm_push(
+        token=os.environ.get("FCM_DEVICE_TOKEN"),
+        title="Are You Alright!",
+        body="Don't forget to check in before midnight! 🌙",
+    )
+
+
+def start_midnight_scheduler():
+    global _scheduler
+
+    if _scheduler and _scheduler.running:
+        return _scheduler
+
+    _scheduler = BackgroundScheduler(timezone=CONFIG["midnight_reminder_timezone"])
+    _scheduler.add_job(
+        send_midnight_reminder,
+        "cron",
+        hour=CONFIG["midnight_reminder_hour"],
+        minute=CONFIG["midnight_reminder_minute"],
+        id="midnight-fcm-reminder",
+        replace_existing=True,
+    )
+    _scheduler.start()
+    logger.info(
+        "Started midnight reminder scheduler for %02d:%02d %s",
+        CONFIG["midnight_reminder_hour"],
+        CONFIG["midnight_reminder_minute"],
+        CONFIG["midnight_reminder_timezone"],
+    )
+    return _scheduler
+
+if os.environ.get("ENABLE_MIDNIGHT_SCHEDULER", "true").lower() == "true":
+    start_midnight_scheduler()
+
+
+# ---------------------------------------------------
 # Routes
 # ---------------------------------------------------
 
@@ -315,6 +426,24 @@ def dashboard_filters_api():
 @api_error_response("Insights")
 def insights_api():
     return jsonify(get_insights_data())
+
+
+@app.route("/api/profile", methods=["GET", "PATCH"])
+@api_error_response("Profile")
+def profile_api():
+    if request.method == "GET":
+        return jsonify(load_profile())
+
+    payload = request.get_json(silent=True) or {}
+    profile = load_profile()
+
+    for field in PROFILE_FIELDS:
+        if field in payload:
+            value = payload[field]
+            profile[field] = "" if value is None else str(value).strip()
+
+    save_profile(profile)
+    return jsonify({"status": "success", "profile": profile})
 
 
 @app.route("/health")
