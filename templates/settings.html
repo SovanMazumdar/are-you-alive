@@ -12,18 +12,50 @@
         <h1>Settings</h1>
         <p class="subtitle">Shape your daily check-in ritual.</p>
 
-        <div class="setting-card">
+        <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+            <button class="settings-tab active" id="profile-tab" type="button" role="tab" aria-selected="true" aria-controls="profile-panel" data-settings-tab="profile">Profile</button>
+            <button class="settings-tab" id="reminder-tab" type="button" role="tab" aria-selected="false" aria-controls="reminder-panel" data-settings-tab="reminder">Reminder</button>
+            <button class="settings-tab" id="streak-tab" type="button" role="tab" aria-selected="false" aria-controls="streak-panel" data-settings-tab="streak">Streak</button>
+        </div>
+
+        <section class="setting-card settings-panel" id="profile-panel" role="tabpanel" aria-labelledby="profile-tab" data-settings-panel="profile">
+            <h2>Profile</h2>
+            <p class="setting-helper">Keep your account details ready for authentication and caregiver notifications.</p>
+            <form id="profile-form">
+                <div class="profile-grid">
+                    <label for="firstName">First name
+                        <input id="firstName" name="firstName" type="text" autocomplete="given-name">
+                    </label>
+                    <label for="lastName">Last name
+                        <input id="lastName" name="lastName" type="text" autocomplete="family-name">
+                    </label>
+                    <label for="username">Username
+                        <input id="username" name="username" type="text" autocomplete="username">
+                    </label>
+                    <label for="phone">Phone
+                        <input id="phone" name="phone" type="tel" autocomplete="tel">
+                    </label>
+                    <label for="email" class="full-width">Email
+                        <input id="email" name="email" type="email" autocomplete="email">
+                    </label>
+                </div>
+                <button class="settings-save-btn" type="submit">Save Profile</button>
+                <p id="profile-save-status" class="setting-helper" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <section class="setting-card settings-panel" id="reminder-panel" role="tabpanel" aria-labelledby="reminder-tab" data-settings-panel="reminder" hidden>
             <h2>Reminder Time</h2>
             <label for="reminder-time">Preferred time</label>
             <input id="reminder-time" type="time" value="08:00">
-            <p class="setting-helper">A gentle reminder to check in.</p>
-        </div>
+            <p class="setting-helper">A gentle reminder to check in. The backend FCM scheduler also warns at 23:00 Asia/Kolkata when you have not checked in.</p>
+        </section>
 
-        <div class="setting-card">
+        <section class="setting-card settings-panel" id="streak-panel" role="tabpanel" aria-labelledby="streak-tab" data-settings-panel="streak" hidden>
             <h2>Streak Protection</h2>
             <p>1 skip allowed per week.</p>
             <p class="setting-helper">Life happens. Your streak is safe.</p>
-        </div>
+        </section>
 
         <nav class="bottom-nav" aria-label="Primary navigation">
             <a href="/" class="nav-item"><span class="nav-icon" aria-hidden="true">🏠</span><span>Home</span></a>
@@ -33,5 +65,7 @@
             <a href="/privacy" class="nav-item"><span class="nav-icon" aria-hidden="true">🔒</span><span>Privacy</span></a>
         </nav>
     </div>
+
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 </body>
 </html>
