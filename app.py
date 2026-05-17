@@ -472,11 +472,110 @@ def schedule_checker():
 # Main Entry
 # ---------------------------------------------------
 
+
+
+# ── Profile storage + FCM push + midnight scheduler (feat/aya-v2) ──
+import json as _json
+import requests as _http_req
+from apscheduler.schedulers.background import BackgroundScheduler as _BgSched
+
+PROFILE_FILE = "profile.json"
+
+
+def load_profile():
+    if not os.path.exists(PROFILE_FILE):
+        return {
+            "firstName": "", "lastName": "", "username": "",
+            "email": os.environ.get("EMERGENCY_EMAIL", ""), "phone": "",
+        }
+    with open(PROFILE_FILE, "r", encoding="utf-8") as _f:
+        return _json.load(_f)
+
+
+def save_profile_data(p):
+    with open(PROFILE_FILE, "w", encoding="utf-8") as _f:
+        _json.dump(p, _f)
+
+
+@app.route("/api/profile", methods=["GET"])
+def get_profile():
+    try:
+        return jsonify(load_profile())
+    except Exception as exc:
+        return jsonify({"status": "error", "message": str(exc)}), 500
+
+
+@app.route("/api/profile", methods=["PATCH"])
+def update_profile():
+    try:
+        data = request.get_json(silent=True) or {}
+        p = load_profile()
+        for k, v in data.items():
+            if k in {"firstName", "lastName", "username", "email", "phone"} \
+                    and isinstance(v, str):
+                p[k] = v.strip()
+        save_profile_data(p)
+        return jsonify({"status": "ok", "profile": p})
+    except Exception as exc:
+        return jsonify({"status": "error", "message": str(exc)}), 500
+
+
+def send_fcm_push(title, body):
+    sk = os.environ.get("FCM_SERVER_KEY", "")
+    dt = os.environ.get("FCM_DEVICE_TOKEN", "")
+    if not sk or not dt:
+        logger.warning("FCM_SERVER_KEY or FCM_DEVICE_TOKEN not set — push skipped.")
+        return
+    try:
+        r = _http_req.post(
+            "https://fcm.googleapis.com/fcm/send",
+            json={
+                "to": dt,
+                "notification": {"title": title, "body": body, "sound": "default"},
+                "priority": "high",
+            },
+            headers={
+                "Authorization": f"key={sk}",
+                "Content-Type": "application/json",
+            },
+            timeout=10,
+        )
+        logger.info("FCM push sent — HTTP %s", r.status_code)
+    except Exception as exc:
+        logger.error("FCM push failed: %s", exc)
+
+
+def midnight_checkin_reminder():
+    today = datetime.now().date().isoformat()
+    try:
+        chks = normalize_checkins(load_checkins())
+        checked = {c["date"] for c in chks}
+    except Exception:
+        checked = set()
+    if today not in checked:
+        logger.info("Midnight reminder: no check-in today — sending push.")
+        send_fcm_push(
+            "Are You Alright! \U0001f319",
+            "Don't forget to check in before midnight!",
+        )
+
+
+def start_midnight_scheduler():
+    tz = os.environ.get("TIMEZONE", "Asia/Kolkata")
+    sched = _BgSched(timezone=tz)
+    sched.add_job(midnight_checkin_reminder, "cron", hour=23, minute=0)
+    sched.start()
+    logger.info("Midnight scheduler started (fires 23:00 %s).", tz)
+
+
 if __name__ == "__main__":
     is_debug = os.environ.get("FLASK_ENV") != "production"
 
-    if is_debug:
-        threading.Thread(target=schedule_checker, daemon=True).start()
+    if is_debug and callable(globals().get("schedule_checker")):
+        import threading as _threading
+        _threading.Thread(target=schedule_checker, daemon=True).start()
+
+    start_midnight_scheduler()
 
     app.run(
         host="0.0.0.0",
